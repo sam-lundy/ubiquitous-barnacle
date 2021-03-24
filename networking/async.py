@@ -1,5 +1,5 @@
 import asyncio
-from aiohttp import ClientSession   # pylint: disable=import-error
+from aiohttp import ClientSession 
 
 base_url = 'http://httpbin.org'
 
@@ -9,7 +9,7 @@ async def count():
         await asyncio.sleep(1)
 
 async def get_delay(seconds):
-    endpoint = f'/delay{seconds}'
+    endpoint = f'/delay/{seconds}'
 
     print(f'Getting with {seconds} delay ...')
 
