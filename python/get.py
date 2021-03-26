@@ -1,37 +1,29 @@
 from ncclient import manager
-#import logging
 import xmltodict
+import xml.dom.minidom
+import xml.etree.ElementTree as ET
 
-#logging.basicConfig(level=logging.DEBUG)
+m = manager.connect(
+    host="sandbox-iosxe-latest-1.cisco.com",
+    port=830,
+    username="developer",
+    password="C1sco12345",
+    hostkey_verify=False
+    )
 
-router = {
-    "host": "ios-xe-mgmt-latest.cisco.com",
-    "port": "830",
-    "username": "developer",
-    "password": "C1sco12345"
-}
-
-int_filter = """
- <filter>
-  <interfaces xmlns="urn:ietf:params:xml:ns:yang:ietf-interfaces">
-    <interface>
-      <name>GigabitEthernet2</name>
-    </interface>
-  </interfaces>
-  <interfaces-state xmlns="urn:ietf:params:xml:ns:yang:ietf-interfaces">
-    <interface>
-      <name>GigabitEthernet2</name>
-    </interface>
-  </interfaces-state>
+'''
+print("#Supported Capabilities (YANG models):")
+for capability in m.server_capabilities:
+    print(capability)
+'''
+'''
+netconf_reply = m.get_config(source='running')
+print(xml.dom.minidom.parseString(netconf_reply.xml).toprettyxml())
+'''
+netconf_filter = """
+<filter type="subtree">
+    <native xmlns="http://cisco.com/ns/yang/Cisco-IOS-XE-native" />
 </filter>
 """
-
-with manager.connect(**router, hostkey_verify=False) as m:
-    netconf_response = m.get(int_filter)
-
-python_response = xmltodict.parse(netconf_response.xml)["rpc-reply"]["data"]
-op = python_response["interfaces-state"]["interface"]
-config = python_response["interfaces"]["interface"]
-
-print(f"Name: {config['name']['#text']}")
-print(f"Packets in {op['statistics']['in-unicast-pkts']}")
+netconf_reply = m.get(source="running", filter=netconf_filter)
+print(xml.dom.minidom.parseString(netconf_reply.xml).toprettyxml())
