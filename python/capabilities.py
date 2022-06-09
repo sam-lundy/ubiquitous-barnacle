@@ -16,8 +16,3 @@ with manager.connect(**router, hostkey_verify=False) as m:
         print(' ')
         print(capability)
 
-
-
-
-
-##This is a comment
